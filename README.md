@@ -1,3 +1,3 @@
 Movie API
 
-Wesley Rou
+Wesley Rou and Christopher Bogan

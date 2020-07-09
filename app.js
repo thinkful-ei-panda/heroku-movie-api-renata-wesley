@@ -24,9 +24,8 @@ function validateBearerToken(req,res,next){
 app.use(validateBearerToken);
 
 app.get('/movie', (req,res)=>{
-  const genre=req.query.genre;
-  const country=req.query.country;
-  const avgVote=req.query.avg_vote;
+  const {genre, country, avg_vote} = req.query;
+  const avgVote=avg_vote;
 
   let filteredByGenre;
   let filteredByCountry;
