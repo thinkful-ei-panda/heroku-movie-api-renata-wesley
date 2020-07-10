@@ -4,12 +4,14 @@ const morgan = require('morgan');
 const cors = require('cors');
 const helmet = require('helmet');
 
+const {PORT,NODE_ENV} = require ('./config');
 const movieData= require('./movieData.js');
 
 const app=express();
-app.use(morgan('dev'));
-app.use(helmet());
+const morganSetting = NODE_ENV === 'production' ? 'tiny' : 'common';
+app.use(morgan(morganSetting));
 app.use(cors());
+app.use(helmet());
 
 function validateBearerToken(req,res,next){
   const authToken= req.get('Authorization');
@@ -22,6 +24,16 @@ function validateBearerToken(req,res,next){
 }
 
 app.use(validateBearerToken);
+
+app.use((error,req,res,next) => {
+  let response;
+  if(NODE_ENV==='production'){
+    response={error: {message: 'server error'}};
+  } else{
+    response={error};
+  }
+  res.status(500).json(response);
+});
 
 app.get('/movie', (req,res)=>{
   const {genre, country, avg_vote} = req.query;
@@ -61,6 +73,4 @@ app.get('/movie', (req,res)=>{
   res.json(filteredByAvgVote);
 });
 
-app.listen(8080, ()=>{
-  console.log('Server running on port 8080');
-});
+app.listen(PORT);
